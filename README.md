@@ -1,6 +1,6 @@
 ### Jsp_drawing 프로젝트 README.md
 ## Demo
-([Demo Link]https://jangdonggun.duckdns.org/jsp-drawing/main.jsp)
+- **Live URL**: ([Demo](https://jangdonggun.duckdns.org/jsp-drawing/main.jsp)
 ## 개요
 
 Jsp_drawing 프로젝트는 JSP(JavaServer Pages)를 사용하여 간단한 게시판과 채팅 기능을 제공하는 웹 애플리케이션입니다. 사용자 관리, 게시판 글 작성 및 삭제, 실시간 채팅 등의 기능을 구현했습니다.
