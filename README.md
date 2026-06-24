@@ -1,108 +1,39 @@
-### Jsp_drawing 프로젝트 README.md
+# Jsp_drawing
 
-## Demo
+JSP 기반 **게시판 + 실시간 채팅** 웹 애플리케이션입니다. 회원 가입·로그인, 글 CRUD, WebSocket 채팅을 제공합니다.
 
-- **Live:** [https://stargazyp.com/jsp-drawing/](https://stargazyp.com/jsp-drawing/main.jsp)
+**Live:** [https://stargazyp.com/jsp-drawing/](https://stargazyp.com/jsp-drawing/main.jsp)
+
+Repository: [github.com/StargazyP/Jsp_drawing](https://github.com/StargazyP/Jsp_drawing)
+
+---
+
+## 주요 기능
+
+- **회원** — 회원가입, 로그인, 마이페이지(정보 수정·탈퇴)
+- **게시판** — 글 목록·작성·상세·수정·삭제
+- **실시간 채팅** — WebSocket 다중 사용자 채팅 (`chat.jsp`, `WsServer`)
+- **반응형 UI** — Bootstrap 기반 레이아웃, 공통 `app.css`
+
+## 사용 시나리오
+
+1. 회원가입 후 로그인 → **게시판**에서 글 작성·조회
+2. **채팅** 페이지에서 다른 사용자와 실시간 메시지 교환
+3. 마이페이지에서 **프로필 수정**
+
+## 서버 구성 (요약)
+
+| 구성 | 기술 |
+|------|------|
+| App | Java 17, JSP/Servlet, Tomcat (WAR) |
+| DB | MySQL (`BBS` 스키마) |
+| 빌드 | Maven |
+| 배포 | portfolio compose `jsp-drawing`, nginx `/jsp-drawing/` |
+
+로컬 개발: `cp .env.example .env` → `docker compose up -d --build` (앱 http://localhost:8081/). DB 비밀번호는 `.env`에만 두세요.
 
 ## Changelog
 
-- **2026-05-27** — Docker/Tomcat·MySQL compose, DB env 분리(`.env.example`), UI·DAO 정리, portfolio `jsp-drawing` 서비스 연동.
-- **2026-06-02** — Live demo URL (README).
-
-## 개요
-
-Jsp_drawing 프로젝트는 JSP(JavaServer Pages)를 사용하여 간단한 게시판과 채팅 기능을 제공하는 웹 애플리케이션입니다. 사용자 관리, 게시판 글 작성 및 삭제, 실시간 채팅 등의 기능을 구현했습니다.
-
-## 기능
-
-- **사용자 관리**
-  - 사용자 등록 및 로그인
-  - 사용자 정보 수정 및 삭제
-
-- **게시판 기능**
-  - 게시물 작성, 조회, 수정 및 삭제
-  - 게시물 리스트 및 상세보기
-
-- **실시간 채팅**
-  - 다중 사용자 채팅 지원
-  - WebSocket을 사용한 실시간 메시지 전송
-
-## 아키텍처
-
-프로젝트의 아키텍처는 MVC(Model-View-Controller) 패턴을 따릅니다.
-
-### 모델(Model)
-
-- **User.java**: 사용자 정보를 저장하는 클래스
-- **Bbs.java**: 게시물 정보를 저장하는 클래스
-
-### 뷰(View)
-
-- **JSP 파일들**: 사용자 인터페이스를 제공하는 JSP 파일들 (`bbs.jsp`, `chat.jsp`, `client.jsp` 등)
-
-### 컨트롤러(Controller)
-
-- **UserDAO.java**: 사용자 관련 데이터베이스 작업을 수행하는 클래스
-- **BbsDAO.java**: 게시물 관련 데이터베이스 작업을 수행하는 클래스
-- **WsServer.java**: WebSocket 서버로서 실시간 채팅 기능을 담당
-
-### 데이터베이스
-
-- MySQL 등의 관계형 데이터베이스를 사용하여 사용자 정보와 게시물 정보를 저장
-
-### WebSocket
-
-- **WsServer.java**: WebSocket을 통해 실시간 채팅 기능을 제공
-
-## Docker 개발환경
-
-프로젝트 루트에서 다음 명령으로 MySQL + Tomcat 앱을 띄울 수 있습니다.
-
-```bash
-cp .env.example .env   # 최초 1회
-docker compose up -d --build
-```
-
-- **앱 URL**: http://localhost:8081/
-- **MySQL**: 컨테이너 내부 전용 (`MYSQL_*`는 `.env`에서 설정, README에 비밀번호를 적지 마세요)
-
-중지: `docker compose down`
-
-## 주요 파일 설명
-
-- `src/main/java/bbs/`
-  - `Bbs.java`: 게시물 클래스
-  - `BbsDAO.java`: 게시물 데이터 접근 객체
-
-- `src/main/java/user/`
-  - `User.java`: 사용자 클래스
-  - `UserDAO.java`: 사용자 데이터 접근 객체
-
-- `src/main/java/ws/`
-  - `WsServer.java`: WebSocket 서버 클래스
-
-- `src/main/webapp/`
-  - `bbs.jsp`: 게시판 페이지
-  - `chat.jsp`: 채팅 페이지
-  - `client.jsp`: 클라이언트 페이지
-  - `css/`: 스타일 시트 파일들
-  - `js/`: 자바스크립트 파일들
-  - `WEB-INF/`: 웹 애플리케이션 설정 파일들
-  - 
-### 프론트엔드(Frontend)
-
-- **HTML**: 웹 페이지의 구조를 정의하는 마크업 언어
-- **CSS**: 웹 페이지의 스타일링을 담당, Bootstrap 라이브러리를 사용하여 반응형 디자인 구현
-- **JavaScript**: 동적인 사용자 인터페이스를 구현, 클라이언트 측 로직 처리
-- **JSP (JavaServer Pages)**: 서버 측에서 동적으로 HTML 콘텐츠를 생성
-
-### 백엔드(Backend)
-
-- **Java**: 서버 측 로직 구현, JSP와 서블릿을 사용
-- **JDBC (Java Database Connectivity)**: 데이터베이스와의 상호작용을 위한 Java API
-- **WebSocket**: 실시간 통신을 위한 프로토콜, 실시간 채팅 기능 구현
-
-### 데이터베이스(Database)
-
-- **MySQL**: 관계형 데이터베이스 관리 시스템, 사용자 정보와 게시물 데이터를 저장
-
+- **2026-06-24** — README 기능 중심 정리, webhook CI/CD secrets 연동.
+- **2026-06-02** — Live demo URL (stargazyp.com/jsp-drawing).
+- **2026-05-27** — Docker/Tomcat·MySQL compose, UI·DAO 정리.
