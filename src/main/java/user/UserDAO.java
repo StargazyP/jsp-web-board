@@ -1,7 +1,6 @@
 package user;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -14,16 +13,7 @@ public class UserDAO {
     private ResultSet rs;
 
     public UserDAO() {
-        try {
-        	Class.forName("com.mysql.cj.jdbc.Driver");
-            String dbURL = "jdbc:mysql://localhost:3306/BBS";
-            String dbID = "root";
-            String dbPw = "marisstella";
-           
-            conn = DriverManager.getConnection(dbURL, dbID, dbPw);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        conn = db.DbConfig.getConnection();
     }
 
     public int login(String userID, String userPw) {

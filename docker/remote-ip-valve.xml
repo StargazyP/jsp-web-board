@@ -1,0 +1,5 @@
+    <Valve className="org.apache.catalina.valves.RemoteIpValve"
+           internalProxies=".*"
+           remoteIpHeader="X-Forwarded-For"
+           protocolHeader="X-Forwarded-Proto"
+           protocolHeaderHttpsValue="https" />

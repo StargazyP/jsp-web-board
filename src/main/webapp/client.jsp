@@ -79,7 +79,8 @@
 	<br>
 	<textarea id="echoText" rows="5" cols="30"></textarea>
 	<script type="text/javascript">
-		var webSocket = new WebSocket("ws://localhost:8080/JSPWEB/websocketendpoint");
+		var wsUrl = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + '${pageContext.request.contextPath}/websocketendpoint';
+		var webSocket = new WebSocket(wsUrl);
 		var echoText = document.getElementById("echoText");
 		echoText.value = "";
 		var message = document.getElementById("message");
@@ -105,7 +106,7 @@
 			echoText.value += "Disconnect ... \n";
 		}
 
-		function wserror(message){
+		function wsError(message){
 			echoText.value += "Error ... \n";
 		}
 	</script>

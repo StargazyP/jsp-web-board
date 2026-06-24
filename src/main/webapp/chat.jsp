@@ -1,32 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.io.PrintWriter" %>
-<%@ page import="bbs.Bbs" %>
-<%@ page import="bbs.BbsDAO" %>
-<%@ page import="org.apache.commons.net.ftp.FTPClient,org.apache.commons.net.ftp.FTPFile" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Application</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-    <style>
-        #myCanvas {
-            border: 1px solid #000;
-            background-color: #fff;
-            width: 100%;
-            height: 500px;
-        }
-        #chat-content {
-            height: 400px;
-            overflow-y: auto;
-        }
-    </style>
+<%@ include file="/WEB-INF/includes/head.jspf" %>
+<title>Chat · JSP Drawing</title>
 </head>
 <body>
 
 <%
-
 String userID = null;
 if (session.getAttribute("userID") == null) {
     PrintWriter script = response.getWriter();
@@ -38,13 +20,9 @@ if (session.getAttribute("userID") == null) {
 if (session.getAttribute("userID") != null) {
     userID = (String) session.getAttribute("userID");
 }
-int pageNumber = 1;
-if (request.getParameter("pageNumber") != null) {
-    pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
-}
 %>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
     <div class="container-fluid">
         <button type="button" class="navbar-toggler" 
             data-bs-toggle="collapse" 
@@ -54,65 +32,46 @@ if (request.getParameter("pageNumber") != null) {
             aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="index.jsp">Web</a>
+        <a class="navbar-brand" href="index.jsp">JSP Drawing</a>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="active"><a class="nav-link" href="main.jsp">MAIN</a></li>
-                <li class="nav-item"><a class="nav-link" href="bbs.jsp">PAGE</a></li>
+                <li class="nav-item"><a class="nav-link" href="main.jsp">Main</a></li>
+                <li class="nav-item"><a class="nav-link" href="bbs.jsp">Board</a></li>
+                <li class="nav-item"><a class="nav-link active" href="chat.jsp">Chat</a></li>
             </ul>
-            <%
-            if(userID == null){
-            %>
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser"
                         role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">CONNECT</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="login.jsp">LOGIN</a></li>
-                        <li><a class="dropdown-item" href="register.jsp">SIGNUP</a></li>
+                        aria-expanded="false"><%= userID %></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                        <li><a class="dropdown-item" href="logoutAction.jsp">Logout</a></li>
                     </ul>
                 </li>
             </ul>
-            <%
-            } else {
-            %>
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                        role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">USER CONTROL</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="logoutAction.jsp">LOGOUT</a></li>
-                    </ul>
-                </li>
-            </ul>
-            <%
-            }
-            %>
         </div>
     </div>
 </nav>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6">
-            <canvas id="myCanvas"></canvas>
+<div class="container-fluid app-container-wide chat-layout">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="chat-canvas-wrap">
+                <canvas id="myCanvas"></canvas>
+            </div>
         </div>
-        <div class="col-md-6">
-            <div class="card card-bordered">
+        <div class="col-lg-5">
+            <div class="chat-card">
                 <div class="card-header">
-                    <h4 class="card-title"><strong>Chat</strong></h4>
+                    <h4 class="card-title">Real-time Chat</h4>
                 </div>
-                <div class="ps-container ps-theme-default ps-active-y" id="chat-content">
-                    <!-- Your chat content here -->
-                </div>
-                <div class="publisher bt-1 border-light">
-                    <input id="message" type="text" class="form-control" placeholder="Type a message">
-                    <button onclick="sendMessage();" class="btn btn-primary mt-2">Send</button>
-                    <button onclick="clearCanvas();" class="btn btn-danger mt-2">Clear Canvas</button>
-                    <a class="publisher-btn" href="#" data-abc="true"><i class="fa fa-smile"></i></a>
-                    <a class="publisher-btn text-info" href="#" data-abc="true"><i class="fa fa-paper-plane"></i></a>
+                <div id="chat-content"></div>
+                <div class="chat-publisher">
+                    <input id="message" type="text" class="form-control" placeholder="Type a message" onkeydown="if(event.key==='Enter') sendMessage();">
+                    <div class="btn-row">
+                        <button onclick="sendMessage();" class="btn btn-primary">Send</button>
+                        <button onclick="clearCanvas();" class="btn btn-danger">Clear Canvas</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -120,7 +79,8 @@ if (request.getParameter("pageNumber") != null) {
 </div>
 
 <script>
-    var webSocket = new WebSocket("ws://localhost:8080/JSPWEB/websocketendpoint");
+    var wsUrl = (location.protocol === 'https:' ? 'wss:' : 'ws:') + '//' + location.host + '${pageContext.request.contextPath}/websocketendpoint';
+    var webSocket = new WebSocket(wsUrl);
     var echoText = document.getElementById("chat-content");
     var messageInput = document.getElementById("message");
     var loggedInUserId = "<%= session.getAttribute("userID") %>";
@@ -166,7 +126,7 @@ if (request.getParameter("pageNumber") != null) {
         ctx.beginPath();
         ctx.moveTo(data.x, data.y);
         ctx.lineTo(data.newX, data.newY);
-        ctx.strokeStyle = "black"; 
+        ctx.strokeStyle = "#375582"; 
         ctx.lineWidth = 2; 
         ctx.stroke();
     }
@@ -187,14 +147,14 @@ if (request.getParameter("pageNumber") != null) {
             ctx.beginPath();
             ctx.moveTo(x, 0);
             ctx.lineTo(x, canvas.height);
-            ctx.strokeStyle = "#ccc";
+            ctx.strokeStyle = "#e2e8f0";
             ctx.stroke();
         }
         for (let y = 0; y < canvas.height; y += gridSize) {
             ctx.beginPath();
             ctx.moveTo(0, y);
             ctx.lineTo(canvas.width, y);
-            ctx.strokeStyle = "#ccc";
+            ctx.strokeStyle = "#e2e8f0";
             ctx.stroke();
         }
     }
@@ -206,11 +166,9 @@ if (request.getParameter("pageNumber") != null) {
     let lastX = 0;
     let lastY = 0;
 
-    // 캔버스 크기를 부모 컨테이너에 맞춤
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
 
-    // 그리드 그리기
     drawGrid();
 
     canvas.addEventListener("mousedown", (e) => {
@@ -228,7 +186,7 @@ if (request.getParameter("pageNumber") != null) {
         ctx.beginPath();
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(x, y);
-        ctx.strokeStyle = "black";
+        ctx.strokeStyle = "#375582";
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -246,18 +204,8 @@ if (request.getParameter("pageNumber") != null) {
     canvas.addEventListener("mouseleave", () => {
         isDrawing = false;
     });
-
-    webSocket.addEventListener('message', (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'draw') {
-            drawFromMessage(data);
-        } else if (data.type === 'clear') {
-            clearCanvasLocal();
-        }
-    });
 </script>
 
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

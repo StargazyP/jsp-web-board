@@ -1,0 +1,11 @@
+.git
+.gitignore
+*.md
+.target
+build
+.settings
+.project
+.classpath
+docker-compose*.yml
+Dockerfile
+.dockerignore

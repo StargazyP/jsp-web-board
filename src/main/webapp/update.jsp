@@ -2,12 +2,10 @@
 <%@ page import="bbs.Bbs" %>
 <%@ page import="bbs.BbsDAO" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-<title>Insert title here</title>
+<%@ include file="/WEB-INF/includes/head.jspf" %>
+<title>Edit · JSP Drawing</title>
 </head>
 <body>
 <%
@@ -21,7 +19,6 @@
 		script.println("alert('PLEASE LOGIN');");
 		script.println("location.href = 'login.jsp'");
 		script.println("</script>");
-		
 	}
 	int bbsID = 0;
 	if(request.getParameter("bbsID") != null){
@@ -43,10 +40,9 @@
 		script.println("alert('NO PERMISSION');");
 		script.println("location.href = 'bbs.jsp'");
 		script.println("</script>");
-		
 	}
 %>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
     <div class="container-fluid">
         <button type="button" class="navbar-toggler" 
             data-bs-toggle="collapse" 
@@ -56,46 +52,41 @@
             aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="index.jsp">Web</a>
+        <a class="navbar-brand" href="index.jsp">JSP Drawing</a>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-<!--                 <li><a href="main.jsp">MAIN</a></li>
-                <li class="active"><a href="bbs.jsp">PAGE</a></li> -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser"
+                        role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false"><%= userID %></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                        <li><a class="dropdown-item" href="logoutAction.jsp">Logout</a></li>
+                    </ul>
+                </li>
             </ul>
-
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                    role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">USER CONTROL</a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="logoutAction.jsp">LOGOUT</a></li>
-                </ul>
-            </li>
-        </ul>           
         </div>
     </div>
 </nav>
-<div class="container">
-    <div class="row">
-        <form method="post" action="updateAction.jsp?bbsID=<%=bbsID%>">
-            <table class="table table-striped" style="text-align: center; border: 1px #dddddd;">
-                <tr>
-                    <th colspan="2" style="background-color: #eeeeee; text-align: center;">Board ReWrite System</th>
-                </tr>
-                <tr>
-                    <td><input type="text" class="form-control" placeholder="Title" name="bbsTitle" maxlength="50" value="<%=bbs.getBbsTitle()%>"></td>
-                </tr>
-                <tr>
-                    <td><textarea class="form-control" placeholder="Content" name="bbsContent" maxlength="2048" style="height: 350px;"><%= bbs.getBbsContent() %></textarea></td>
-                </tr>
-                <tr>
-                    <td><input type="submit" class="btn btn-primary pull-right" value="rewrite"></td>
-                </tr>
-            </table>
+
+<div class="container app-container">
+    <h1 class="page-title">Edit Post</h1>
+    <div class="board-panel">
+        <div class="board-panel-header">Rewrite</div>
+        <form method="post" action="updateAction.jsp?bbsID=<%= bbsID %>" class="p-3 p-md-4">
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Title" name="bbsTitle" maxlength="50" value="<%= bbs.getBbsTitle() %>" required>
+            </div>
+            <div class="mb-3">
+                <textarea class="form-control" placeholder="Content" name="bbsContent" maxlength="2048" required><%= bbs.getBbsContent() %></textarea>
+            </div>
+            <div class="btn-actions btn-actions-end">
+                <a href="view.jsp?bbsID=<%= bbsID %>" class="btn btn-outline-secondary">Cancel</a>
+                <input type="submit" class="btn btn-primary" value="Save">
+            </div>
         </form>
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

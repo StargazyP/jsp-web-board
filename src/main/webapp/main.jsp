@@ -3,12 +3,10 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.io.PrintWriter" %>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
-<title>Insert title here</title>
+<%@ include file="/WEB-INF/includes/head.jspf" %>
+<title>Main · JSP Drawing</title>
 </head>
 <body>
 <%
@@ -22,7 +20,7 @@
 		pageNumber = Integer.parseInt(request.getParameter("pageNumber"));
 	}
 %>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg app-navbar">
     <div class="container-fluid">
         <button type="button" class="navbar-toggler" 
             data-bs-toggle="collapse" 
@@ -32,99 +30,77 @@
             aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="index.jsp">Web</a>
+        <a class="navbar-brand" href="index.jsp">JSP Drawing</a>
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="active"><a class="nav-link" href="main.jsp">Main</a></li>
-                <li class="nav-item"><a class="nav-link" href="bbs.jsp">Page</a></li>
-                 <li class="nav-item"><a class="nav-link" href="chat.jsp">Chat</a></li>
-                
+                <li class="nav-item"><a class="nav-link active" href="main.jsp">Main</a></li>
+                <li class="nav-item"><a class="nav-link" href="bbs.jsp">Board</a></li>
+                <li class="nav-item"><a class="nav-link" href="chat.jsp">Chat</a></li>
             </ul>
-            <% 
-            if(session.getAttribute("userID") != null){
-            %>
-            	
-            	<h4><%=userID%> is loggined</h4>
-            <%
-            }
-            %>
-            <%
-           		 if(userID == null){
-            %>
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+            <% if(userID != null) { %>
+                <span class="navbar-text d-none d-md-inline"><%= userID %> logged in</span>
+            <% } %>
+            <% if(userID == null) { %>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
                         role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">CONNECT</a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="login.jsp">LOGIN</a></li>
-                        <li><a class="dropdown-item" href="register.jsp">SIGNUP</a></li>
+                        aria-expanded="false">Account</a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="login.jsp">Login</a></li>
+                        <li><a class="dropdown-item" href="register.jsp">Sign up</a></li>
                     </ul>
                 </li>
             </ul>
-            <%
-            	} else {
-            %>
-      
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown"
-                    role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">USER CONTROL</a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="logoutAction.jsp">LOGOUT</a></li>
-                    <li><a class="dropdown-item" href="mypage.jsp">MYPAGE</a></li>
-                </ul>
-            </li>
-        </ul>
-        <%
-            	}
-        %>
-           
+            <% } else { %>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownUser"
+                        role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false"><%= userID %></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
+                        <li><a class="dropdown-item" href="mypage.jsp">My page</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="logoutAction.jsp">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <% } %>
         </div>
     </div>
 </nav>
-<div class="container">
-    <div class="row">
-			<table class="table table-striped"
-				style="text-align: center; border: 1px #dddddd;">
-				<thead>
-					<tr>
-						<th th style="background-color: #eeeeee; text-align: center;">User's Writing Board</th>
-							
-					</tr>
-				</thead>
-				<table class="table table-striped"
-					style="text-align: center; border: 1px #dddddd;">
-					<thead>
-						<tr>
-							<th style="background-color: #eeeeee; text-align: center;">Number</th>
-							<th style="background-color: #eeeeee; text-align: center;">Title</th>
-							<th style="background-color: #eeeeee; text-align: center;">Writer</th>
-							<th style="background-color: #eeeeee; text-align: center;">Date</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%
-            		BbsDAO bbsDAO = new BbsDAO();
-            		ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
-            		for(int i = 0; i < list.size(); i++){
-            	%>
-						<tr>
-							<td><%= list.get(i).getBbsID()%></td>
-							<td><a href="view.jsp?bbsID=<%= list.get(i).getBbsID()%>"><%= list.get(i).getBbsTitle()%></td>
-							<td><%= list.get(i).getUserID()%></td>
-							<td><%= list.get(i).getBbsDate().substring(0,11) +  list.get(i).getBbsDate().substring(11,13) + " : " + list.get(i).getBbsDate().substring(14,16)%></td>
-						</tr>
 
-						<% 
-            		}
-            	%>
-
-					</tbody>
-				</table>
-		</div>
+<div class="container app-container">
+    <h1 class="page-title">Community Board</h1>
+    <div class="board-panel">
+        <div class="board-panel-header">Recent Posts</div>
+        <table class="table table-board table-hover mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 10%">No.</th>
+                    <th>Title</th>
+                    <th style="width: 18%">Writer</th>
+                    <th style="width: 22%">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%
+                    BbsDAO bbsDAO = new BbsDAO();
+                    ArrayList<Bbs> list = bbsDAO.getList(pageNumber);
+                    for(int i = 0; i < list.size(); i++){
+                %>
+                <tr>
+                    <td><%= list.get(i).getBbsID() %></td>
+                    <td><a href="view.jsp?bbsID=<%= list.get(i).getBbsID() %>"><%= list.get(i).getBbsTitle() %></a></td>
+                    <td><%= list.get(i).getUserID() %></td>
+                    <td><%= list.get(i).getBbsDate().substring(0,11) + list.get(i).getBbsDate().substring(11,13) + " : " + list.get(i).getBbsDate().substring(14,16) %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

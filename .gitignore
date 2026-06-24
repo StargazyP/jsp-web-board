@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+target/
+*.class
+Untitled
+# 레거시 FTP 샘플(하드코딩 자격증명 — 공개 저장소 제외)
+src/main/webapp/downloadindex.jsp
+src/main/webapp/upload.jsp
